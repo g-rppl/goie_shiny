@@ -1,0 +1,73 @@
+/* user header */
+#user_header {
+    color:white;
+    font-size:24px;
+    margin-top:9px;
+}
+
+/* scroll tables */
+.scroll-table {
+    overflow-x:auto;
+}
+
+/* maps */
+#map, #map_1, #map_2 {height: calc(100vh - 80px) !important;}
+
+/* max_TAD action button */
+#show_TAD {
+    cursor: pointer;
+    margin-left:15px;
+    margin-top:0;
+}
+
+#show_speed {
+    cursor: pointer;
+    margin-left:10px;
+    margin-top:-30px;
+}
+
+/* info icon direct recoveries */
+#customsidebar {
+    display:inline-block;
+    margin-left:15px;
+}
+
+.infohover {
+    display:inline-block;
+    position:relative;
+    margin-left:-120px;
+    margin-top:12px;
+}
+
+#vag_sp_lang {
+    display:inline-block;
+    position:relative;
+    margin-left:10px;
+    margin-top:0;
+}
+
+.infohover h3 {margin:12px 0;}
+
+.infohover .direct {
+    min-width:200px;
+    max-width:400px;
+    top:50%;
+    left:100%;
+    transform:translate(0,-50%);
+    padding:10px 20px;
+    color:#ffffff;
+        background-color:#3c8dbc;
+    font-weight:normal;
+    font-size:14px;
+    border-radius:8px;
+    position:absolute;
+    z-index:99999999;
+    box-sizing:border-box;
+    box-shadow:0 1px 8px rgba(0,0,0,0.5);
+    display:none;
+}
+
+.infohover:hover .direct {
+    display:block;
+}
+

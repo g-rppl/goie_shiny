@@ -6,41 +6,7 @@
 ##############################
 
 server <- function(input, output, session) {
-  
-  
-  # ########## password prompt ##########
-  # 
-  # shinyalert(
-  #   title = "Log in",
-  #   text = "Password",
-  #   type = "input",
-  #   closeOnEsc = F,
-  #   closeOnClickOutside = F,
-  #   showCancelButton = F,
-  #   showConfirmButton = T,
-  #   inputType = "password",
-  #   confirmButtonCol = "#26a69a"
-  # )
-  # 
-  # observeEvent(input$shinyalert, {
-  # 
-  #   if (input$shinyalert != "ERIRUB2021") {
-  # 
-  #     # Bad password.
-  #     shinyalert(
-  #       title = "Unauthorized",
-  #       text = "Bad password. Try again?",
-  #       type = "error",
-  #       showConfirmButton = T,
-  #       showCancelButton = T,
-  #       closeOnClickOutside = F,
-  #       closeOnEsc = F,
-  #       confirmButtonCol = "#26a69a",
-  #       callbackJS = "function(x) { if(x !== false) history.go(0); }" #refresh page on OK
-  #     )
-  #   }
-  # })
-  
+
   
   ########## observeEvents when sidebar is collapsed ##########
   

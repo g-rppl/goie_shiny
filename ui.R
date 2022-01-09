@@ -189,7 +189,7 @@ sidebar <- dashboardSidebar(
 ### body
 ##############################
 
-body <- dashboardBody(useShinyjs(), useShinyalert(),
+body <- dashboardBody(useShinyjs(),
                       tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "CSS/styles.css")),   # add css styles
                       mobileDetect('isMobile'),   # detect mobile device
                       pwa("https://vereinjordsand.shinyapps.io/goie/", title = "GOie", output = "www/JS", icon="./www/icon.png"),   # enable PWA

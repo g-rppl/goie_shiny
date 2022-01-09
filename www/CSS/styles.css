@@ -67,6 +67,11 @@
     display:none;
 }
 
+#popup_TAD {
+    left:-720%;
+    right:500%;
+}
+
 .infohover:hover .direct {
     display:block;
 }

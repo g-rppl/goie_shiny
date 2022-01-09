@@ -11,11 +11,12 @@ Jan von Rönn [jan.vonroenn@jordsand.de](mailto:jan.vonroenn@jordsand.de)
 
 ## Versionen
 
-![Version](https://img.shields.io/badge/Version-v1.0.0-blue.svg) 05.04.2021
-
 ![Version](https://img.shields.io/badge/Version-v1.1.0-blue.svg) 16.11.2021
 
 - benutzerdefinierte Farbcodierung der Wiederfundpunkte in Karte
+- englische Bildunterschriften
+
+![Version](https://img.shields.io/badge/Version-v1.0.0-blue.svg) 05.04.2021
 
 ## Urheberrecht
 
@@ -23,7 +24,7 @@ Der Code zu dieser App ist unter GPL Lizenz [![copyright](https://img.shields.io
 
 Die durch die Seitenbetreiber erstellten Inhalte sind lizensiert unter creative common license: **CC BY-NC-ND**
 
-[![copyright](https://i.creativecommons.org/l/by-nc-nd/2.0/de/88x31.png)](http://creativecommons.org/licenses/by-nc-nd/2.0/de/)
+[![copyright](https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 
 
 ## README und Bugreport

@@ -150,7 +150,7 @@ table_year <- function(data=NULL, year_select=NULL, season=NULL) {
   sp <- sort(unique(d$Art))
   
   t <- data.frame(matrix(nrow=length(sp), ncol=6))
-  colnames(t) <- c("Art", "min", "max","mean", "aktuell", "Abweichung [%]")
+  colnames(t) <- c("Art", "Min", "Max", "Mittel", "Aktuell", "Abweichung [%]")
   
   for (i in sp) {
     
@@ -164,8 +164,8 @@ table_year <- function(data=NULL, year_select=NULL, season=NULL) {
     rownames(t) <- NULL
     
     t <- t %>%
-      filter(aktuell>0, !is.na(t$Art)) %>%
-      arrange(desc(aktuell))
+      filter(Aktuell>0, !is.na(t$Art)) %>%
+      arrange(desc(Aktuell))
 
   }
   

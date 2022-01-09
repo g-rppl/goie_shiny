@@ -8,6 +8,40 @@
 server <- function(input, output, session) {
   
   
+  # ########## password prompt ##########
+  # 
+  # shinyalert(
+  #   title = "Log in",
+  #   text = "Password",
+  #   type = "input",
+  #   closeOnEsc = F,
+  #   closeOnClickOutside = F,
+  #   showCancelButton = F,
+  #   showConfirmButton = T,
+  #   inputType = "password",
+  #   confirmButtonCol = "#26a69a"
+  # )
+  # 
+  # observeEvent(input$shinyalert, {
+  # 
+  #   if (input$shinyalert != "ERIRUB2021") {
+  # 
+  #     # Bad password.
+  #     shinyalert(
+  #       title = "Unauthorized",
+  #       text = "Bad password. Try again?",
+  #       type = "error",
+  #       showConfirmButton = T,
+  #       showCancelButton = T,
+  #       closeOnClickOutside = F,
+  #       closeOnEsc = F,
+  #       confirmButtonCol = "#26a69a",
+  #       callbackJS = "function(x) { if(x !== false) history.go(0); }" #refresh page on OK
+  #     )
+  #   }
+  # })
+  
+  
   ########## observeEvents when sidebar is collapsed ##########
   
   observeEvent(input$sidebarCollapsed, {
@@ -97,12 +131,28 @@ server <- function(input, output, session) {
   ### species list
   ##############################
   
-  output$sp_ges <- renderValueBox({
+  
+  ########## value box ##########
+  
+  output$sp_ges <- output$sp_ges_2 <- renderValueBox({
     
     max(artenl$Nr, na.rm=T) %>%
-      valueBox(subtitle="Nachgewiesene Arten", icon=icon("crow"), color="light-blue")
+      valueBox(subtitle=HTML("Nachgewiesene Arten &ndash; <br> <i> species recorded </i>"), icon=icon("crow"), color="light-blue")
     
   })
+  
+  
+  ########## text ##########
+  
+  output$Artenliste_text <- renderText({
+    
+    HTML('Vollständige Liste aller auf der Greifswalder Oie nachgewiesenen Vogelarten. Ausnahmeerscheinungen sind mit einem "A" vor dem Artnamen versehen. &ndash;
+    <i> Complete list of all bird species recorded on Greifswalder Oie. Vagrants are indicated by an "A". </i>') 
+    
+  })
+  
+  
+  ########## tables ##########
   
   output$artenliste <- function() {
     artenl[, c(1,7,2:4)] %>%
@@ -140,26 +190,27 @@ server <- function(input, output, session) {
   ### breeding birds
   ##############################
   
+  
+  ########## value box ##########
+  
   output$sp_ges_bvk <- renderValueBox({
     
     length(unique(bvk$Art)) %>%
-      valueBox(subtitle="Brutvogelarten", icon=icon("crow"), color="light-blue")
+      valueBox(subtitle=HTML("Brutvogelarten &ndash; <br> <i> breeding bird species </i>"), icon=icon("crow"), color="light-blue")
     
   })
   
   
   ########## main content ##########
   
-  ##### interactive species plot #####
+  ##### for selected species #####
   
   tmp.bvk <- reactive({
     bvk[bvk$Art == input$bvk_art,]
   })
-
-  observe({
-    output$bvk <- renderPlot(
-      breeding(data=tmp.bvk())
-    )
+  
+  output$bvk <- renderPlot({
+    breeding(data=tmp.bvk())
   })
   
   ##### species per year #####
@@ -187,10 +238,8 @@ server <- function(input, output, session) {
     bvk[bvk$Art == input$bvk_art_2,]
   })
   
-  observe({
-    output$bvk_2 <- renderPlot(
-      breeding(data=tmp.bvk.2())
-    )
+  output$bvk_2 <- renderPlot({
+    breeding(data=tmp.bvk.2())
   })
   
   
@@ -209,6 +258,19 @@ server <- function(input, output, session) {
     toggle("bvk_box")
     toggle("bvk_box_arten")
   })
+  
+  
+  ########## species names ##########
+  
+  output$bvk_art_name <- renderText({
+    HTML(paste(artenl$Species[artenl$Art==input$bvk_art][1], "<br> 
+               <i>", artenl$`wiss. Name`[artenl$Art==input$bvk_art][1], "</i>"))
+  })
+  
+  output$bvk_art_name_2 <- renderText({
+    HTML(paste(artenl$Species[artenl$Art==input$bvk_art_2][1], "<br> 
+               <i>", artenl$`wiss. Name`[artenl$Art==input$bvk_art_2][1], "</i>"))
+  })
 
 
   ##############################
@@ -216,20 +278,34 @@ server <- function(input, output, session) {
   ##############################
   
   
-  ########## value Boxes ##########
+  ########## value boxes ##########
   
   output$total_catch_sp <- renderValueBox({
     
-    (length(unique(data_ring$Art))-3) %>%   # -Buch_x_Berg, Sprosser_x_Nachtigall, rotst. Blk
-      valueBox(subtitle="Beringte Arten", icon=icon("crow"), color="light-blue")
+    if (input$select_season == "Frühjahr") 
+      out <- length(unique(data_ring$Art[data_ring$DATE%in%s.season]))-3   # -Buch_x_Berg, Sprosser_x_Nachtigall, rotst. Blk
+    if (input$select_season == "Herbst") 
+      out <- length(unique(data_ring$Art[data_ring$DATE%in%a.season]))-3   # -Buch_x_Berg, Sprosser_x_Nachtigall, rotst. Blk
+    if (input$select_season == "gesamtes Jahr") 
+      out <- length(unique(data_ring$Art))-3   # -Buch_x_Berg, Sprosser_x_Nachtigall, rotst. Blk
+    
+    out %>% 
+      valueBox(subtitle=HTML("Beringte Arten &ndash; <br> <i> ringed species </i>"), icon=icon("crow"), color="light-blue")
     
   })
   
   output$total_catch <- renderValueBox({
     
-    length(data_ring$RTYPE[data_ring$RTYPE=="e"]) %>%
+    if (input$select_season == "Frühjahr")
+      out <- length(data_ring$RTYPE[data_ring$RTYPE=="e" & data_ring$DATE%in%s.season])
+    if (input$select_season == "Herbst")
+      out <- length(data_ring$RTYPE[data_ring$RTYPE=="e" & data_ring$DATE%in%a.season])
+    if (input$select_season == "gesamtes Jahr") 
+      out <- length(data_ring$RTYPE[data_ring$RTYPE=="e"])
+    
+    out %>%
     format(big.mark = ".", decimal.mark = ",") %>%
-    valueBox(subtitle="Beringte Vögel", icon=icon("database"), color="light-blue") 
+    valueBox(subtitle=HTML("Beringte Vögel &ndash; <br> <i> ringed individuals </i>"), icon=icon("database"), color="light-blue") 
     
   })
 
@@ -374,11 +450,77 @@ server <- function(input, output, session) {
     plot_ring_count(data=sum_all, select=input$select_season)
     
   })
+  
+  
+  ########## species names ##########
+  
+  output$ring_count_art_name <- renderText({
+    HTML(paste(artenl$Species[artenl$Art==input$ring_count_art][1], "<br> 
+               <i>", artenl$`wiss. Name`[artenl$Art==input$ring_count_art][1], "</i>"))
+  })
+  
+  output$ring_count_art_name_2 <- renderText({
+    HTML(paste(artenl$Species[artenl$Art==input$ring_count_art_2][1], "<br> 
+               <i>", artenl$`wiss. Name`[artenl$Art==input$ring_count_art_2][1], "</i>"))
+  })
+  
+  
+  ########## text ##########
+  
+  output$ring_count_text <- output$ring_count_text_2 <- renderText({
+    
+    if (input$select_season == "gesamtes Jahr")
+      out <- HTML("Dargestellt ist die Anzahl der Erstfänge pro Jahr für das Frühjahr (blaue Balken) und den Herbst (grüne Balken). &ndash; 
+                  <i> Number of first captures per year during spring (blue bars) and autumn (green bars). </i>")
+    if (input$select_season == "Herbst")
+      out <- HTML("Dargestellt ist die Anzahl der Erstfänge pro Jahr für den Herbst. &ndash; 
+                  <i> Number of first captures per year during autumn. </i>")
+    if (input$select_season == "Frühjahr")
+      out <- HTML("Dargestellt ist die Anzahl der Erstfänge pro Jahr für das Frühjahr. &ndash; 
+                  <i> Number of first captures per year during spring. </i>")
+    
+    out
+    
+  })
+  
+  output$ring_count_all_text <- renderText({
+    
+    if (input$select_season == "gesamtes Jahr")
+      out <- HTML("Dargestellt ist die Gesamtzahl der Erstfänge pro Jahr für das Frühjahr (blaue Balken) und den Herbst (grüne Balken). &ndash; 
+                  <i> Total number of first captures per year during spring (blue bars) and autumn (green bars). </i>")
+    if (input$select_season == "Herbst")
+      out <- HTML("Dargestellt ist die Gesamtzahl der Erstfänge pro Jahr für den Herbst. &ndash; 
+                  <i> Total number of first captures per year during autumn. </i>")
+    if (input$select_season == "Frühjahr")
+      out <- HTML("Dargestellt ist die Gesamtzahl der Erstfänge pro Jahr für das Frühjahr. &ndash; 
+                  <i> Total number of first captures per year during spring. </i>")
+    
+    out
+    
+  })
 
   
   ##############################
   ### yearly data
   ##############################
+  
+  
+  ########## value boxes ##########
+  
+  output$year_arten <- renderValueBox({
+    
+    length(unique(beob$NAME_SPECIES[beob$DATE_YEAR==input$year & beob$NAME_SPECIES%in%artenl$Art])) %>%
+      valueBox(subtitle=HTML("Nachgewiesene Arten &ndash; <br> <i> species recorded </i>"), icon=icon("crow"), color="light-blue") 
+    
+  })
+  
+  output$year_catch <- renderValueBox({
+    
+    length(tmp.sum_ges()$RTYPE) %>%  
+      format(big.mark = ".", decimal.mark = ",") %>%
+      valueBox(subtitle=HTML("Beringte Vögel &ndash; <br> <i> ringed individuals </i>"), icon=icon("database"), color="light-blue")
+    
+  })
   
   
   ########## for all species ##########
@@ -389,23 +531,14 @@ server <- function(input, output, session) {
   
   tmp.mean_ges <- data_ring %>%
       filter(RTYPE=="e")
-  
-  observe({
     
-    output$year_ges <- renderPlot(
-        
-        plot_year(tmp.sum_ges(), tmp.mean_ges)
-        
-      )
-    
-    output$year_text <- output$year_text_2 <- output$year_text_ges <- renderText({
-      paste("Dargestellt ist die Anzahl der Erstfänge pro Pentade im Jahr", input$year, 
-            "(blaue Balken) sowie die durchschnittliche Fangzahl seit", year_start, "(gestrichelte Linie).")
-    })
-    
+  output$year_ges <- renderPlot({
+      
+    plot_year(tmp.sum_ges(), tmp.mean_ges)
+      
   })
-  
     
+
   ########## for selected species ##########
   
   tmp.sum <- reactive({data_ring %>%
@@ -420,11 +553,11 @@ server <- function(input, output, session) {
     
     output$year_sp <- if (artenl$ringing_plot[artenl$Art==input$year_art][1] == "TRUE") {
       
-      renderPlot(
+      renderPlot({
 
         plot_year(tmp.sum(), tmp.mean())
         
-      )
+      })
     }
   })
   
@@ -452,21 +585,32 @@ server <- function(input, output, session) {
   })
   
   
-  ########## value Boxes ##########
+  ########## species names ##########
   
-  output$year_arten <- renderValueBox({
-    
-    length(unique(beob$NAME_SPECIES[beob$DATE_YEAR==input$year & beob$NAME_SPECIES%in%artenl$Art])) %>%
-      valueBox(subtitle="Nachgewiesene Arten", icon=icon("crow"), color="light-blue") 
-    
+  output$year_art_name <- renderText({
+    HTML(paste(artenl$Species[artenl$Art==input$year_art], "<br> 
+               <i>", artenl$`wiss. Name`[artenl$Art==input$year_art], "</i>"))
   })
   
-  output$year_catch <- renderValueBox({
-    
-    length(tmp.sum_ges()$RTYPE) %>%  
-      format(big.mark = ".", decimal.mark = ",") %>%
-      valueBox(subtitle="Beringte Vögel", icon=icon("database"), color="light-blue")
-    
+  output$year_art_name_2 <- renderUI({
+    HTML(paste(artenl$Species[artenl$Art==input$year_art_2], "<br> 
+               <i>", artenl$`wiss. Name`[artenl$Art==input$year_art_2], "</i>"))
+  })
+  
+  
+  ########## texts ##########
+  
+  output$year_text <- output$year_text_2 <- renderText({
+    HTML(paste("Dargestellt ist die Anzahl der Erstfänge pro Pentade im Jahr", input$year, 
+               "(blaue Balken) sowie die durchschnittliche Fangzahl seit", year_start, "(gestrichelte Linie). &ndash;
+               <i> Number of first captures in", input$year, "(blue bars) together with the mean since", year_start, "(dashed line). </i>"))
+  })
+  
+  output$year_text_ges <- renderText({
+    HTML(paste("Dargestellt ist die Gesamtzahl der Erstfänge aller Arten pro Pentade im Jahr", input$year, 
+               "(blaue Balken) sowie die durchschnittliche Fangzahl seit", year_start, "(gestrichelte Linie). &ndash;
+               <i> Total number of first captures of all species in", input$year, "(blue bars) together with the mean since", 
+               year_start, "(dashed line). </i>"))
   })
   
   
@@ -534,7 +678,7 @@ server <- function(input, output, session) {
   observe({
     
     output$pheno_species <- renderText({
-      HTML(paste(h3(input$sp), artenl$Species[artenl$Art==input$sp][1], "- <i>", 
+      HTML(paste(h3(input$sp), artenl$Species[artenl$Art==input$sp][1], "&ndash; <i>", 
                  artenl$`wiss. Name`[artenl$Art==input$sp][1], "</i><br><br>"))
     })
 
@@ -553,28 +697,36 @@ server <- function(input, output, session) {
     }
 
     output$ringing_text <- renderText({
+      
+      if (input$show_descriptions == TRUE) {
 
-      if (artenl$ringing_plot[artenl$Art==input$sp][1] == "TRUE") {
-
-        if (ring_type() == 0)
-          out <- "Dargestellt ist die durchschnittliche Anzahl der Erstfänge pro Pentade seit 2000,
-          die Fangzeiten sind grau hinterlegt."
-        if (ring_type() == 1)
-          out <- "Dargestellt ist die durchschnittliche Anzahl der Erstfänge pro Pentade seit 2000 (blaue Balken),
-          die Fangzeiten sind grau hinterlegt. Die Anteile der Alterklassen sind dem unteren Diagrammen zu entnehmen,
-          der Anteil unbestimmter Vögel wird in Prozent für das Frühjahr und den Herbst angegeben und ist grau dargestellt."
-        if (ring_type() == 2)
-          out <- "Dargestellt ist die durchschnittliche Anzahl der Erstfänge pro Pentade seit 2000 (blaue Balken),
-          die Fangzeiten sind grau hinterlegt. Die Anteile der Alterklassen und Geschlechter sind den unteren Diagrammen zu entnehmen,
-          der Anteil unbestimmter Vögel wird in Prozent für das Frühjahr und den Herbst angegeben und ist grau dargestellt."
-        if (ring_type() == 3)
-          out <- "Dargestellt ist die Gesamtzahl der Erstfänge pro Pentade über alle Jahre,
-          die Fangzeiten sind grau hinterlegt."
-
-      } else out <- "Zu wenige Daten oder keine standardisierte Erfassung."
-
-      out
-
+        if (artenl$ringing_plot[artenl$Art==input$sp][1] == "TRUE") {
+  
+          if (ring_type() == 0)
+            out <- HTML("Dargestellt ist die durchschnittliche Anzahl der Erstfänge pro Pentade seit 2000, die Fangzeiten sind grau hinterlegt. &ndash; 
+            <i> Mean number of first captures per pentade since 2000, catching seasons are given in grey. </i>")
+          if (ring_type() == 1)
+            out <- HTML("Dargestellt ist die durchschnittliche Anzahl der Erstfänge pro Pentade seit 2000 (blaue Balken),
+            die Fangzeiten sind grau hinterlegt. Die Anteile der Alterklassen sind dem unteren Diagrammen zu entnehmen,
+            der Anteil unbestimmter Vögel wird in Prozent für das Frühjahr und den Herbst angegeben und ist grau dargestellt. &ndash;
+            <i> Mean number of first captures per pentade since 2000 (blue bars), catching seasons are given in grey. 
+            Chart below shows proportions of age classes, proportions of unidentified birds are given for spring and autumn and shown in grey. </i>")
+          if (ring_type() == 2)
+            out <- HTML("Dargestellt ist die durchschnittliche Anzahl der Erstfänge pro Pentade seit 2000 (blaue Balken),
+            die Fangzeiten sind grau hinterlegt. Die Anteile der Alterklassen und Geschlechter sind den unteren Diagrammen zu entnehmen,
+            der Anteil unbestimmter Vögel wird in Prozent für das Frühjahr und den Herbst angegeben und ist grau dargestellt. &ndash;
+            <i> Mean number of first captures per pentade since 2000 (blue bars), catching seasons are given in grey.
+            Charts below show proportions of age classes and sexes, proportions of unidentified birds are given for spring and autumn and shown in grey. </i>")
+          if (ring_type() == 3)
+            out <- HTML("Dargestellt ist die Gesamtzahl der Erstfänge pro Pentade über alle Jahre, die Fangzeiten sind grau hinterlegt. &ndash;
+            <i> Total number of first captures per pentade over all years, catching seasons are given in grey. </i>")
+  
+        } else out <- HTML("Zu wenige Daten oder keine standardisierte Erfassung. &ndash; <i> Data deficit or not standardised monitored. </i>")
+  
+        out
+  
+      }
+    
     })
 
   })
@@ -639,17 +791,24 @@ server <- function(input, output, session) {
 
     output$beobachtung_text <- renderText({
       
-      if (beob_type() == 0)
-        out <- "Zu wenige Daten oder keine standardisierte Erfassung."
-      if (beob_type() == 1)
-        out <- "Dargestellt ist die Anzahl der Tage mit Beobachtungen pro Dekade."
-      if (beob_type() == 2)
-        out <- paste("Dargestellt ist das mittlere Dekandenmaximum seit", year_start, "(oben, 
-              die Farbe der Punkte gibt die Anzahl Jahre mit Beobachtungsdaten an. 
-              Je mehr Jahre mit Beobachtungen vorliegen, desto belastbarer das Dekadenmaximum.) 
-              sowie der relative Anteil von vollständigen Beobachtungslisten mit Nachweisen pro Dekade (unten).")
-
-      out
+      if (input$show_descriptions == TRUE) {
+      
+        if (beob_type() == 0)
+          out <- HTML("Zu wenige Daten oder keine standardisierte Erfassung. &ndash; <i> Data deficit or not standardised monitored. </i>")
+        if (beob_type() == 1)
+          out <- HTML("Dargestellt ist die Anzahl der Tage mit Beobachtungen pro Dekade. &ndash; <i> Number of days with observations per decade. </i>")
+        if (beob_type() == 2)
+          out <- HTML(paste("Dargestellt ist das mittlere Dekandenmaximum seit", year_start, "(oben, 
+                die Farbe der Punkte gibt die Anzahl Jahre mit Beobachtungsdaten an. 
+                Je mehr Jahre mit Beobachtungen vorliegen, desto belastbarer das Dekadenmaximum.) 
+                sowie der relative Anteil von vollständigen Beobachtungslisten mit Nachweisen pro Dekade (unten). &ndash;
+                <i> Mean 10d-maximum since", year_start, "(upper, colour of dots refers to the number of years with observations. 
+                The more years with data are available, the more reliable is the 10d-max.) 
+                together with the relative amount of complete cecklistes with observations per decade (lower). </i>"))
+  
+        out
+        
+      }
 
     })
 
@@ -685,18 +844,26 @@ server <- function(input, output, session) {
     }
     
     output$pheno_year_text <- renderText({
+      
+      if (input$show_descriptions == TRUE) {
 
-      if (artenl$pheno_year[artenl$Art==input$sp][1] == "TRUE") {
-
-        out <- "Dargestellt ist der jährliche Median (Punkte) mit den 0,25/0,75 (dicke vertikale Linien) und
-                0,1/0,9 Quantilen (dünne vertikale Linien) sowie der Durchzugsmedian über alle Jahre (blaue Linie)
-                und lineare Trends für Median und 0,1/0,9 Quantile (gestrichelte Linien)."
-
-      } else out <- "Zu wenige Daten oder keine standardisierte Erfassung."
-
-      out
+        if (artenl$pheno_year[artenl$Art==input$sp][1] == "TRUE") {
+  
+          out <- HTML("Dargestellt ist der jährliche Median (Punkte) mit den 50-%- (dicke vertikale Linien) und
+                 80-%-Quantilen (dünne vertikale Linien) sowie der Durchzugsmedian über alle Jahre (blaue Linie)
+                 und lineare Trends für Median und 80-%-Quantile (gestrichelte Linien). &ndash;
+                 <i> Migration timing over years: annual median (dots) together with 50% (thick vertival lines) and 
+                 80% quantiles (thin vertical lines), median over all years (blue line)
+                 and linear trends for median and 80% quantile (dashed lines). </i>")
+  
+        } else out <- HTML("Zu wenige Daten oder keine standardisierte Erfassung. &ndash; <i> Data deficit or not standardised monitored. </i>")
+  
+        out
+        
+      }
 
     })
+    
   })
 
   
@@ -713,7 +880,7 @@ server <- function(input, output, session) {
   observe({
     
     output$pheno_species_2 <- renderText({
-      HTML(paste(h3(input$sp_2), artenl$Species[artenl$Art==input$sp_2][1], "- <i>", 
+      HTML(paste(h3(input$sp_2), artenl$Species[artenl$Art==input$sp_2][1], "&ndash; <i>", 
                  artenl$`wiss. Name`[artenl$Art==input$sp_2][1], "</i><br><br>"))
     })
     
@@ -733,26 +900,34 @@ server <- function(input, output, session) {
     
     output$ringing_text_2 <- renderText({
       
-      if (artenl$ringing_plot[artenl$Art==input$sp_2][1] == "TRUE") {
-        
-        if (ring_type_2() == 0)
-          out <- "Dargestellt ist die durchschnittliche Anzahl der Erstfänge pro Pentade seit 2000,
-            die Fangzeiten sind grau hinterlegt."
-        if (ring_type_2() == 1)
-          out <- "Dargestellt ist die durchschnittliche Anzahl der Erstfänge pro Pentade seit 2000 (blaue Balken),
-            die Fangzeiten sind grau hinterlegt. Die Anteile der Alterklassen sind dem unteren Diagrammen zu entnehmen,
-            der Anteil unbestimmter Vögel wird in Prozent für das Frühjahr und den Herbst angegeben und ist grau dargestellt."
-        if (ring_type_2() == 2)
-          out <- "Dargestellt ist die durchschnittliche Anzahl der Erstfänge pro Pentade seit 2000 (blaue Balken),
-            die Fangzeiten sind grau hinterlegt. Die Anteile der Alterklassen und Geschlechter sind den unteren Diagrammen zu entnehmen,
-            der Anteil unbestimmter Vögel wird in Prozent für das Frühjahr und den Herbst angegeben und ist grau dargestellt."
-        if (ring_type_2() == 3)
-          out <- "Dargestellt ist die Gesamtzahl der Erstfänge pro Pentade über alle Jahre,
-            die Fangzeiten sind grau hinterlegt."
-        
-      } else out <- "Zu wenige Daten oder keine standardisierte Erfassung."
+      if (input$show_descriptions == TRUE) {
       
-      out
+        if (artenl$ringing_plot[artenl$Art==input$sp_2][1] == "TRUE") {
+          
+          if (ring_type_2() == 0)
+            out <- HTML("Dargestellt ist die durchschnittliche Anzahl der Erstfänge pro Pentade seit 2000, die Fangzeiten sind grau hinterlegt. &ndash; 
+            <i> Mean number of first captures per pentade since 2000, catching seasons are given in grey. </i>")
+          if (ring_type_2() == 1)
+            out <- HTML("Dargestellt ist die durchschnittliche Anzahl der Erstfänge pro Pentade seit 2000 (blaue Balken),
+            die Fangzeiten sind grau hinterlegt. Die Anteile der Alterklassen sind dem unteren Diagrammen zu entnehmen,
+            der Anteil unbestimmter Vögel wird in Prozent für das Frühjahr und den Herbst angegeben und ist grau dargestellt. &ndash;
+            <i> Mean number of first captures per pentade since 2000 (blue bars), catching seasons are given in grey. 
+            Chart below shows proportions of age classes, proportions of unidentified birds are given for spring and autumn and shown in grey. </i>")
+          if (ring_type_2() == 2)
+            out <- HTML("Dargestellt ist die durchschnittliche Anzahl der Erstfänge pro Pentade seit 2000 (blaue Balken),
+            die Fangzeiten sind grau hinterlegt. Die Anteile der Alterklassen und Geschlechter sind den unteren Diagrammen zu entnehmen,
+            der Anteil unbestimmter Vögel wird in Prozent für das Frühjahr und den Herbst angegeben und ist grau dargestellt. &ndash;
+            <i> Mean number of first captures per pentade since 2000 (blue bars), catching seasons are given in grey.
+            Charts below show proportions of age classes and sexes, proportions of unidentified birds are given for spring and autumn and shown in grey. </i>")
+          if (ring_type_2() == 3)
+            out <- HTML("Dargestellt ist die Gesamtzahl der Erstfänge pro Pentade über alle Jahre, die Fangzeiten sind grau hinterlegt. &ndash;
+            <i> Total number of first captures per pentade over all years, catching seasons are given in grey. </i>")
+          
+        } else out <- HTML("Zu wenige Daten oder keine standardisierte Erfassung. &ndash; <i> Data deficit or not standardised monitored. </i>")
+        
+        out
+        
+      }
       
     })
     
@@ -818,17 +993,24 @@ server <- function(input, output, session) {
     
     output$beobachtung_text_2 <- renderText({
       
-      if (beob_type_2() == 0)
-        out <- "Zu wenige Daten oder keine standardisierte Erfassung."
-      if (beob_type_2() == 1)
-        out <- "Dargestellt ist die Anzahl der Tage mit Beobachtungen pro Dekade."
-      if (beob_type_2() == 2)
-        out <- paste("Dargestellt ist das mittlere Dekandenmaximum seit", year_start, "(oben, 
-              die Farbe der Punkte gibt die Anzahl Jahre mit Beobachtungsdaten an. 
-              Je mehr Jahre mit Beobachtungen vorliegen, desto belastbarer das Dekadenmaximum.) 
-              sowie der relative Anteil von vollständigen Beobachtungslisten mit Nachweisen pro Dekade (unten).")
+      if (input$show_descriptions == TRUE) {
       
-      out
+        if (beob_type_2() == 0)
+          out <- HTML("Zu wenige Daten oder keine standardisierte Erfassung. &ndash; <i> Data deficit or not standardised monitored. </i>")
+        if (beob_type_2() == 1)
+          out <- HTML("Dargestellt ist die Anzahl der Tage mit Beobachtungen pro Dekade. &ndash; <i> Number of days with observations per decade. </i>")
+        if (beob_type_2() == 2)
+          out <- HTML(paste("Dargestellt ist das mittlere Dekandenmaximum seit", year_start, "(oben, 
+                die Farbe der Punkte gibt die Anzahl Jahre mit Beobachtungsdaten an. 
+                Je mehr Jahre mit Beobachtungen vorliegen, desto belastbarer das Dekadenmaximum.) 
+                sowie der relative Anteil von vollständigen Beobachtungslisten mit Nachweisen pro Dekade (unten). &ndash;
+                <i> Mean 10d-maximum since", year_start, "(upper, colour of dots refers to the number of years with observations. 
+                The more years with data are available, the more reliable is the 10d-max.) 
+                together with the relative amount of complete cecklistes with observations per decade (lower). </i>"))
+        
+        out
+        
+      }
       
     })
     
@@ -865,17 +1047,25 @@ server <- function(input, output, session) {
     
     output$pheno_year_text_2 <- renderText({
       
-      if (artenl$pheno_year[artenl$Art==input$sp_2][1] == "TRUE") {
-        
-        out <- "Dargestellt ist der jährliche Median (Punkte) mit den 0,25/0,75 (dicke vertikale Linien) und
-                0,1/0,9 Quantilen (dünne vertikale Linien) sowie der Durchzugsmedian über alle Jahre (blaue Linie)
-                und lineare Trends für Median und 0,1/0,9 Quantile (gestrichelte Linien)."
-        
-      } else out <- "Zu wenige Daten oder keine standardisierte Erfassung."
+      if (input$show_descriptions == TRUE) {
       
-      out
+        if (artenl$pheno_year[artenl$Art==input$sp_2][1] == "TRUE") {
+          
+          out <- HTML("Dargestellt ist der jährliche Median (Punkte) mit den 50-%- (dicke vertikale Linien) und
+                 80-%-Quantilen (dünne vertikale Linien) sowie der Durchzugsmedian über alle Jahre (blaue Linie)
+                 und lineare Trends für Median und 80-%-Quantile (gestrichelte Linien). &ndash;
+                 <i> Migration timing over years: annual median (dots) together with 50% (thick vertival lines) and 
+                 80% quantiles (thin vertical lines), median over all years (blue line)
+                 and linear trends for median and 80% quantile (dashed lines). </i>")
+          
+        } else out <- HTML("Zu wenige Daten oder keine standardisierte Erfassung. &ndash; <i> Data deficit or not standardised monitored. </i>")
+        
+        out
+        
+      }
       
     })
+    
   })
 
   
@@ -915,7 +1105,7 @@ server <- function(input, output, session) {
     ########## species ##########
     
     output$vagrant_species <- renderText({
-      HTML(paste(h3(input$vag_sp), artenl$Species[artenl$Art==input$vag_sp], "- <i>", 
+      HTML(paste(h3(input$vag_sp), artenl$Species[artenl$Art==input$vag_sp], "&ndash; <i>", 
                  artenl$`wiss. Name`[artenl$Art==input$vag_sp], "</i><br><br>"))
     })
 
@@ -966,7 +1156,7 @@ server <- function(input, output, session) {
                             HTML(paste0(
                               "<div class='infohover action-button' id='show_TAD'>",
                               "<i class='fa fa-search-location' style='font-size: 2em;'></i>",
-                              "<div class='direct'>",
+                              "<div class='direct' id='popup_TAD'>",
                               "<h3>Info</h3>",
                               "<p>hier klicken, um den ältesten Vogel auf der Karte zu sehen.</p>",
                               "</div>",
@@ -1365,7 +1555,13 @@ server <- function(input, output, session) {
     toggle("map_color")
     updateCheckboxInput(session, "direct", value = 0)
   })
+  
+  
+  ########## observeEvent map_color ##########
 
+  observeEvent(input$map_color, {
+    updateCheckboxInput(session, "direct", value = 0)
+  })
   
   ##############################
   ### about

@@ -32,37 +32,49 @@ options(spinner.color=js, spinner.color.background="#ffffff", spinner.size=2)
 ##############################
 
 header <- dashboardHeader(title = hidden(div(id="GOie", tags$b("Greifswalder Oie"))),
-                          dropdownMenu(type = "message", icon = icon("info"),
+                          dropdownMenu(type = "message", icon = icon("info"), badgeStatus = NULL,
                                        headerText = tags$b("Informationen zum Datenstand"),
                                        shinydashboardPlus::messageItem("Beringung", textOutput("ring_info"), icon= icon("ring"), inputId="openModal1"),
                                        shinydashboardPlus::messageItem("Beobachtungen", textOutput("beob_info"), icon= icon("binoculars"), inputId="openModal2"),
                                        messageItem("Wiederfunde", textOutput("rec_info"), icon = icon("search-location"))
                           ),
-                          dropdownMenu(type = 'message', headerText = tags$b("Teilen"),
+                          dropdownMenu(type = "message", headerText = tags$b("Teilen"),
                                       icon = icon("share-alt"), badgeStatus = NULL,
                                       messageItem(
-                                        from = 'Twitter',
+                                        from = "Twitter",
                                         message = "",
                                         icon = icon("twitter"),
-                                        href = "https://twitter.com/intent/tweet?url=https://g-rppl.shinyapps.io/rec_map/&text=Greifswalder%20Oie%20BirdObs%20datacenter%20dashboard"
+                                        href = "https://twitter.com/intent/tweet?url=https://vereinjordsand.shinyapps.io/goie/&text=Greifswalder%20Oie%20BirdObs%20datacenter%20dashboard"
                                       ),
                                       messageItem(
-                                        from = 'Facebook',
+                                        from = "Facebook",
                                         message = "",
                                         icon = icon("facebook"),
-                                        href = "https://www.facebook.com/sharer/sharer.php?u=https://g-rppl.shinyapps.io/rec_map/"
+                                        href = "https://www.facebook.com/sharer/sharer.php?u=https://vereinjordsand.shinyapps.io/goie/"
                                       ),
                                       messageItem(
-                                        from = 'Linkedin',
+                                        from = "Linkedin",
                                         message = "",
                                         icon = icon("linkedin"),
-                                        href = "https://www.linkedin.com/shareArticle?mini=true&url=https://g-rppl.shinyapps.io/rec_map/"
+                                        href = "https://www.linkedin.com/shareArticle?mini=true&url=https://vereinjordsand.shinyapps.io/goie/"
                                       ),
                                       messageItem(
-                                        from = 'EMail',
+                                        from = "Telegram",
+                                        message = "",
+                                        icon = tagAppendAttributes(icon("telegram")),
+                                        href = "https://telegram.me/share/url?url=https://vereinjordsand.shinyapps.io/goie/&text=%0AGreifswalder%20Oie%20BirdObs%20datacenter%20dashboard"
+                                      ),
+                                      messageItem(
+                                        from = "WhatsApp",
+                                        message = "",
+                                        icon = tagAppendAttributes(icon("whatsapp")),
+                                        href = "https://wa.me/?text=https://vereinjordsand.shinyapps.io/goie/"
+                                      ),
+                                      messageItem(
+                                        from = "EMail",
                                         message = "",
                                         icon = tags$i(class = "fas fa-envelope", style="font-size: 12px"),
-                                        href = "mailto:info@example.com?&subject=&cc=&bcc=&body=https://g-rppl.shinyapps.io/rec_map/%0AGreifswalder%20Oie%20BirdObs%20datacenter%20dashboard"
+                                        href = "mailto:info@example.com?&subject=&cc=&bcc=&body=https://vereinjordsand.shinyapps.io/goie/%0AGreifswalder%20Oie%20BirdObs%20datacenter%20dashboard"
                                       )
                           )
 )
@@ -91,7 +103,7 @@ sidebar <- dashboardSidebar(
       hidden(div(id="sidbar_ring_count", conditionalPanel("input.sidebar === 'ring_count'",
                            selectInput("select_season", "Saison", c("gesamtes Jahr", "Frühjahr", "Herbst")),
                            actionButton("compare_ring_count", "Arten vergleichen", icon("sync-alt")),
-                           hidden(actionButton("compare_ring_count_2", "Gesamtzahl anzeigen", icon("chart-bar")))
+                            hidden(actionButton("compare_ring_count_2", "Gesamtzahl anzeigen", icon("chart-bar")))
                            )
       )),
     menuItem("Jahresübersicht", tabName = "year_data", icon = icon("chart-line"),
@@ -113,7 +125,8 @@ sidebar <- dashboardSidebar(
                               selectInput("sp_2", "Art 2", artenl$Art[artenl$Dz_Status!="Ausnahmeerscheinung" & artenl$Art!="Alpenbirkenzeisig"],
                                           selected = "Rotkehlchen")
                               )
-                           )
+                           ),
+                           checkboxInput("show_descriptions", "zeige Bildunterschriften", value = TRUE)
       ))),
     menuItem("Seltenheiten", tabName = "vag", icon = icon("dove"),
              badgeLabel =  HTML(paste(icon("binoculars"), "/", icon("ring"))), badgeColor = "green"),
@@ -176,10 +189,10 @@ sidebar <- dashboardSidebar(
 ### body
 ##############################
 
-body <- dashboardBody(useShinyjs(),
+body <- dashboardBody(useShinyjs(), useShinyalert(),
                       tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "CSS/styles.css")),   # add css styles
                       mobileDetect('isMobile'),   # detect mobile device
-                      pwa("https://g-rppl.shinyapps.io/goie_shiny/", title = "GOie", output = "www/JS", icon="./www/icon.png"),   # enable PWA
+                      pwa("https://vereinjordsand.shinyapps.io/goie/", title = "GOie", output = "www/JS", icon="./www/icon.png"),   # enable PWA
   tabItems(
     
     
@@ -196,7 +209,7 @@ body <- dashboardBody(useShinyjs(),
               box(title="Greifswalder Oie BirdObs", solidHeader = TRUE, status = "primary", br(),
                   fluidRow(
                     column(6, HTML('<center><img src="GOie.png"></center>')),
-                    column(6, br(),br(),br(),br(), valueBoxOutput("sp_ges", width = 12))
+                    column(6, br(),br(),br(), valueBoxOutput("sp_ges", width = 12))
                   ), br(),
                   uiOutput("intro")
               ),
@@ -209,8 +222,9 @@ body <- dashboardBody(useShinyjs(),
                   h4("Dank"),
                   "Wir danken allen ehemaligen und aktiven HelferInnen, FöjlerInnen,
                    BeringerInnen und allen anderen für ihren Beitrag zum Gelingen der Arbeit auf der Insel.
-                   Für die Bereitstellung der Kontroll- und Wiederfunddaten von nicht auf der Insel beringten
-                   oder nicht auf der Insel wiedergefundenen Vögeln bedanken wir uns bei der Beringungszentrale Hiddensee."
+                   Für die Bereitstellung der Kontroll- und Wiederfunddaten von Vögeln mit Bezug zu anderen 
+                   Beringungszentralen bedanken wir uns bei der Beringungszentrale Hiddensee 
+                   und dem Dachverband Deutscher Avifaunisten danken wir für die Bereitstellung der ornitho-Daten."
                   )
             ),
             leafletOutput("overview_map")
@@ -220,11 +234,14 @@ body <- dashboardBody(useShinyjs(),
     ########## species list ##########
     
     tabItem(tabName = "Artenliste",
-            h2("Artenliste"),
+            h2(HTML("Artenliste &ndash; <i> Species list </i>")), br(),
+            fluidRow(
+              valueBoxOutput("sp_ges_2", width = 3)
+            ),
             fluidRow(
               box(title = "Artenliste der Vögel der Greifswalder Oie", collapsible = TRUE, status = "primary",
-                  'Vollständige Liste aller auf der Greifswalder Oie nachgewiesenen Vogelarten. Ausnahmeerscheinungen sind mit einem "A" vor dem Artnamen versehen.', 
-                  br(), br(),
+                  htmlOutput("Artenliste_text"), 
+                  br(),
                   div(class="scroll-table", tableOutput("artenliste"))
               ),
               box(title= "Gefangenschaftsflüchtlinge", collapsible = TRUE, status = "warning",
@@ -235,27 +252,33 @@ body <- dashboardBody(useShinyjs(),
     ########## breeding birds ##########
     
     tabItem(tabName = "breeding",
-            h2("Brutvögel"), br(),
+            h2(HTML("Brutvögel &ndash; <i> Breeding birds </i>")), br(),
             fluidRow(
               valueBoxOutput("sp_ges_bvk", width = 3)
             ),
             fluidRow(
               box(title = "Brutbestand über die Jahre", status = "primary",
                   plotOutput("bvk"),
-                  selectInput("bvk_art", "Art", unique(bvk$Art[order(bvk$Nr)]), selected = "", width = 300),
-                  "Dargestellt ist die Anzahl der kartierten Reviere / Brutpaare pro Jahr."
+                  fluidRow(column(6, selectInput("bvk_art", "Art", unique(bvk$Art[order(bvk$Nr)]), selected = "", width = 300)),
+                           column(6, br(), htmlOutput("bvk_art_name"))
+                  ),
+                  HTML("Dargestellt ist die Anzahl der kartierten Reviere / Brutpaare pro Jahr. &ndash;
+                       <i> Number of territories / breeding pairs per year. </i>")
               ),
               div(id = "bvk_box_arten",
                   box(title = "Anzahl Brutvogelarten über die Jahre", status = "warning",
                       plotOutput("bvk_arten"),
-                      "Dargestellt ist die Anzahl der Brutvogelarten pro Jahr."
+                      HTML("Dargestellt ist die Anzahl der Brutvogelarten pro Jahr. &ndash; <i> Number of breeding bird species per year. </i>")
                   )
               ),
               hidden(div(id = "bvk_box",
                 box(title = "Brutbestand über die Jahre", status = "primary",
                     plotOutput("bvk_2"),
-                    selectInput("bvk_art_2", "Art", unique(bvk$Art[order(bvk$Nr)]), selected = "", width = 300),
-                    "Dargestellt ist die Anzahl der kartierten Reviere / Brutpaare pro Jahr."
+                    fluidRow(column(6, selectInput("bvk_art_2", "Art", unique(bvk$Art[order(bvk$Nr)]), selected = "", width = 300)),
+                             column(6, br(), htmlOutput("bvk_art_name_2"))
+                    ),
+                    HTML("Dargestellt ist die Anzahl der kartierten Reviere / Brutpaare pro Jahr. &ndash;
+                       <i> Number of territories / breeding pairs per year. </i>")
                 )
               ))
             ),
@@ -265,7 +288,7 @@ body <- dashboardBody(useShinyjs(),
     ########## first captures over years ##########
 
     tabItem(tabName = "ring_count",
-            h2("Beringungszahlen"), br(),
+            h2(HTML("Beringungszahlen &ndash; <i> Ringing totals </i>")), br(),
             fluidRow(
               valueBoxOutput("total_catch_sp", width = 3),
               valueBoxOutput("total_catch", width = 3)
@@ -273,24 +296,26 @@ body <- dashboardBody(useShinyjs(),
             fluidRow(
               box(title = "Beringungen pro Jahr nach Art", status = "primary",
                   plotOutput("ring_count"),
-                  selectInput("ring_count_art", "Art", unique(data_ring$Art[order(data_ring$Nr)]), 
-                              selected = "Rotkehlchen", width = 300),
-                  "Dargestellt ist die Anzahl der Erstfänge pro Jahr für das Frühjahr (blaue Balken) und den Herbst (grüne Balken)."
+                  fluidRow(column(6, selectInput("ring_count_art", "Art", unique(data_ring$Art[order(data_ring$Nr)]), 
+                              selected = "Rotkehlchen", width = 300)),
+                           column(6, br(), htmlOutput("ring_count_art_name"))
+                  ),
+                  htmlOutput("ring_count_text")
               ),
               div(id = "ring_count_ges",
                   box(title = "Beringungen pro Jahr gesamt", status = "warning",
                       plotOutput("ring_count_all"),
-                      "Dargestellt ist die Gesamtzahl der Erstfänge pro Jahr für das Frühjahr (blaue Balken) 
-                      und den Herbst (grüne Balken)."
+                      htmlOutput("ring_count_all_text")
                   )
               ),
               hidden(div(id = "ring_count_box",
                          box(title = "Beringungen pro Jahr nach Art", status = "primary",
                              plotOutput("ring_count_2"),
-                             selectInput("ring_count_art_2", "Art", unique(data_ring$Art[order(data_ring$Nr)]), 
-                                         selected = "Rotkehlchen", width = 300),
-                             "Dargestellt ist die Anzahl der Erstfänge pro Jahr für das Frühjahr (blaue Balken) 
-                             und den Herbst (grüne Balken)."
+                             fluidRow(column(6, selectInput("ring_count_art_2", "Art", unique(data_ring$Art[order(data_ring$Nr)]), 
+                                         selected = "Rotkehlchen", width = 300)),
+                                      column(6, br(), htmlOutput("ring_count_art_name_2"))
+                             ),
+                             htmlOutput("ring_count_text_2")
                             )
                          )
                      )
@@ -301,7 +326,7 @@ body <- dashboardBody(useShinyjs(),
     ########## yearly data ##########
     
     tabItem(tabName = "year_data",
-            h2("Jahresübersicht"), br(),
+            h2(HTML("Jahresübersicht &ndash; <i> Annual reports </i>")), br(),
             fluidRow(
               valueBoxOutput("year_arten", width = 3),
               valueBoxOutput("year_catch", width = 3)
@@ -309,32 +334,36 @@ body <- dashboardBody(useShinyjs(),
             fluidRow(
               box(title = "Beringungen pro Pentade", status = "primary",
                   plotOutput("year_sp"),
-                  selectInput("year_art", "Art", unique(artenl$Art[artenl$year_plot=="TRUE"]), selected = "Rotkehlchen", width = 300),
-                  textOutput("year_text")
+                  fluidRow(column(6, selectInput("year_art", "Art", unique(artenl$Art[artenl$year_plot=="TRUE"]), selected = "Rotkehlchen", width = 300)),
+                           column(6, br(), htmlOutput("year_art_name"))
+                  ),
+                  htmlOutput("year_text")
               ),
               div(id = "year_box_ges",
                   box(title = "Beringungen aller Arten pro Pentade", status = "warning",
                       plotOutput("year_ges"),
-                      textOutput("year_text_ges")
+                      htmlOutput("year_text_ges")
                   )
               ),
               hidden(div(id = "year_box",
                 box(title = "Beringungen pro Pentade", status = "primary",
                     plotOutput("year_sp_2"),
-                    selectInput("year_art_2", "Art", unique(artenl$Art[artenl$year_plot=="TRUE"]), selected = "Rotkehlchen", width = 300),
-                    textOutput("year_text_2")
+                    fluidRow(column(6, selectInput("year_art_2", "Art", unique(artenl$Art[artenl$year_plot=="TRUE"]), selected = "Rotkehlchen", width = 300)),
+                             column(6, br(),  uiOutput("year_art_name_2"))
+                    ),
+                    htmlOutput("year_text_2")
                 )
               ))
             ),
             fluidRow(
               box(title = "Frühjahr", status = "primary",
-                  "Saisonübersicht mit minimalen, maximalen und druchschnittlichen Fangzahlen 
-                  sowie der Abweichung vom Mittel seit 2000.", br(), br(),
+                  HTML("Saisonübersicht mit minimalen, maximalen und druchschnittlichen Fangzahlen sowie der Abweichung vom Mittel seit 2000. &ndash;
+                       <i> Seasonal report for spring with minimal, maximal and mean numbers of first captures including the deviation from the mean since 2000. </i>"), br(), br(),
                   div(class="scroll-table", DTOutput("year_s"))
               ),
               box(title = "Herbst", status = "primary",
-                  "Saisonübersicht mit minimalen, maximalen und druchschnittlichen Fangzahlen 
-                  sowie der Abweichung vom Mittel seit 2000.", br(), br(),
+                  HTML("Saisonübersicht mit minimalen, maximalen und druchschnittlichen Fangzahlen sowie der Abweichung vom Mittel seit 2000. &ndash;
+                       <i> Seasonal report for autumn with minimal, maximal and mean numbers of first captures including the deviation from the mean since 2000. </i>"), br(), br(),
                   div(class="scroll-table", DTOutput("year_a"))
               )
             )
@@ -344,32 +373,32 @@ body <- dashboardBody(useShinyjs(),
     ########## phenology ##########
 
     tabItem(tabName = "pheno",
-            h2("Phänologie"),
+            h2(HTML("Phänologie &ndash; <i> Phenology </i>")),
             fluidRow(column(6, htmlOutput("pheno_species")),
                      hidden(div(id="pheno_species_2", column(6, htmlOutput("pheno_species_2"))))
             ),
             fluidRow(
               box(id="p_box1", title = "Auftreten im Jahresverlauf nach Beringungsdaten", status = "primary", collapsible = TRUE,
                   plotOutput("ringing"),
-                  textOutput("ringing_text")
+                  htmlOutput("ringing_text")
               ),
               hidden(div(id = "pheno_box_1",
                          box(title = "Auftreten im Jahresverlauf nach Beringungsdaten", status = "primary", collapsible = TRUE,
                              plotOutput("ringing_2"),
-                             textOutput("ringing_text_2")
+                             htmlOutput("ringing_text_2")
                             )
                          )
                      )
             ),
             fluidRow(
               box(title = "Auftreten im Jahresverlauf nach Beobachtungsdaten", status = "primary", collapsible = TRUE,
-                  plotOutput("beobachtung"),
-                  textOutput("beobachtung_text")
+                  plotOutput("beobachtung"), br(),
+                  htmlOutput("beobachtung_text")
               ),
               hidden(div(id = "pheno_box_2",
                          box(title = "Auftreten im Jahresverlauf nach Beobachtungsdaten", status = "primary", collapsible = TRUE,
-                             plotOutput("beobachtung_2"),
-                             textOutput("beobachtung_text_2")
+                             plotOutput("beobachtung_2"), br(),
+                             htmlOutput("beobachtung_text_2")
                             )
                          )
                      )
@@ -378,13 +407,13 @@ body <- dashboardBody(useShinyjs(),
               box(title = "Phänologie über die Jahre nach Beringungsdaten", status = "primary", collapsible = TRUE,
                   plotOutput("pheno_year"),
                   tableOutput("pheno_year_table"),
-                  textOutput("pheno_year_text")
+                  htmlOutput("pheno_year_text")
               ),
               hidden(div(id = "pheno_box_3",
                          box(title = "Phänologie über die Jahre nach Beringungsdaten", status = "primary", collapsible = TRUE,
                              plotOutput("pheno_year_2"),
                              tableOutput("pheno_year_table_2"),
-                             textOutput("pheno_year_text_2")
+                             htmlOutput("pheno_year_text_2")
                             )
                          )
                      )
@@ -395,16 +424,16 @@ body <- dashboardBody(useShinyjs(),
     ########## vagrants ##########
 
     tabItem(tabName = "vag",
-            h2("Seltenheiten"), 
+            h2(HTML("Seltenheiten &ndash; <i> Vagrants </i>")), 
             htmlOutput("vagrant_species"),
             fluidRow(
               box(title = "Tage mit Nachweisen pro Jahr", status = "primary",
                   plotOutput("vag_year"),
-                  "Dargestellt ist die Anzahl der Tage mit Nachweisen pro Jahr."
+                  HTML("Dargestellt ist die Anzahl der Tage mit Nachweisen pro Jahr. &ndash; <i> Number of days with records per year. </i>")
               ),
               box(title = "Phänologie", status = "primary",
                   plotOutput("vag_pheno"),
-                  "Dargestellt ist die Anzahl der Tage mit Nachweisen pro Dekade."
+                  HTML("Dargestellt ist die Anzahl der Tage mit Nachweisen pro Dekade. &ndash; <i> Number of days with records per decade. </i>")
               )
             )
     ),

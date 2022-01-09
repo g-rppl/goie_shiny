@@ -14,13 +14,13 @@ Diese App ist eine interaktive Darstellung der Beringungs- und Beobachtungsdaten
 
 ## Aktuell laufenden Apps
 
-* [Dashboard](https://g-rppl.shinyapps.io/goie_shiny)
+* [Dashboard](https://vereinjordsand.shinyapps.io/goie)
 
 <img src="www/app_demo.png" align="center">
 
 ## PWA Unterstützung
 
-Diese App besitzt einen PWA (Progressive Web App) Unterstützung und kann auf vielen mobilen Geräten als full screen App angezeigt werden: Öffne den Link der App ([https://g-rppl.shinyapps.io/goie_shiny](https://g-rppl.shinyapps.io/goie_shiny)) in einen mobilen Browser und wähle unter den Einstellungen des Browsers "Installieren" (andriod) oder unter "Teilen" "Zum Home-Bildschirm hinzufügen" (iOS). Die App lässt sich so zum Homesceen hinzufügen.
+Diese App besitzt einen PWA (Progressive Web App) Unterstützung und kann auf vielen mobilen Geräten als full screen App angezeigt werden: Öffne den Link der App ([https://vereinjordsand.shinyapps.io/goie](https://vereinjordsand.shinyapps.io/goie  )) in einen mobilen Browser und wähle unter den Einstellungen des Browsers "Installieren" (andriod) oder unter "Teilen" "Zum Home-Bildschirm hinzufügen" (iOS). Die App lässt sich so zum Homesceen hinzufügen.
 
 <img src="www/mobile.png">
 

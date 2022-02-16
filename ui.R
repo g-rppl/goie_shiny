@@ -90,24 +90,24 @@ sidebar <- dashboardSidebar(
   sidebarMenu(id = "sidebar", 
     menuItem("Startseite", tabName = "Startseite", icon = icon("home")),
     menuItem("Artenliste", tabName = "Artenliste", icon = icon("clipboard-list"),
-             badgeLabel = HTML(paste(icon("binoculars"), "/", icon("ring"))), badgeColor = "green"),
+             badgeLabel = HTML(paste(icon("binoculars"), "/", icon("ring"))), badgeColor = "olive"),
     menuItem("Brutvögel", tabName = "breeding", icon = icon("egg"),
-             badgeLabel = icon("binoculars"), badgeColor = "green"),
+             badgeLabel = icon("binoculars"), badgeColor = "olive"),
       hidden(div(id="sidbar_bvk", conditionalPanel("input.sidebar === 'breeding'",
                            actionButton("compare_bvk", "Arten vergleichen", icon("sync-alt")),
                            hidden(actionButton("compare_bvk_2", "Anzahl Arten anzeigen", icon("chart-line")))
                            )
       )),
     menuItem("Beringungszahlen", tabName = "ring_count", icon = icon("chart-bar"),
-             badgeLabel = icon("ring"), badgeColor = "green"),
+             badgeLabel = icon("ring"), badgeColor = "olive"),
       hidden(div(id="sidbar_ring_count", conditionalPanel("input.sidebar === 'ring_count'",
                            selectInput("select_season", "Saison", c("gesamtes Jahr", "Frühjahr", "Herbst")),
                            actionButton("compare_ring_count", "Arten vergleichen", icon("sync-alt")),
-                            hidden(actionButton("compare_ring_count_2", "Gesamtzahl anzeigen", icon("chart-bar")))
+                           hidden(actionButton("compare_ring_count_2", "Gesamtzahl anzeigen", icon("chart-bar")))
                            )
       )),
     menuItem("Jahresübersicht", tabName = "year_data", icon = icon("chart-line"),
-            badgeLabel = HTML(paste(icon("ring"), "/", icon("binoculars"))), badgeColor = "green"),
+            badgeLabel = HTML(paste(icon("ring"), "/", icon("binoculars"))), badgeColor = "olive"),
       hidden(div(id="sidbar_year_data", conditionalPanel("input.sidebar === 'year_data'",
                            selectInput("year", "Jahr", 2000:year_end, selected = year_end),
                            actionButton("compare_year", "Arten vergleichen", icon("sync-alt")),
@@ -115,7 +115,7 @@ sidebar <- dashboardSidebar(
                            )
       )),
     menuItem("Phänologie", tabName = "pheno", icon = icon("calendar"),
-             badgeLabel = HTML(paste(icon("ring"), "/", icon("binoculars"))), badgeColor = "green"),
+             badgeLabel = HTML(paste(icon("ring"), "/", icon("binoculars"))), badgeColor = "olive"),
       hidden(div(id="sidbar_pheno", conditionalPanel("input.sidebar === 'pheno'",
                            selectInput("sp", "Art", artenl$Art[artenl$Dz_Status!="Ausnahmeerscheinung" & artenl$Art!="Alpenbirkenzeisig"], 
                                        selected = "Rotkehlchen"),
@@ -126,16 +126,16 @@ sidebar <- dashboardSidebar(
                                           selected = "Rotkehlchen")
                               )
                            ),
-                           checkboxInput("show_descriptions", "zeige Bildunterschriften", value = TRUE)
+                           prettySwitch("show_descriptions", "zeige Bildunterschriften", fill = TRUE, value = TRUE, status = "primary")
       ))),
     menuItem("Seltenheiten", tabName = "vag", icon = icon("dove"),
-             badgeLabel =  HTML(paste(icon("binoculars"), "/", icon("ring"))), badgeColor = "green"),
+             badgeLabel =  HTML(paste(icon("binoculars"), "/", icon("ring"))), badgeColor = "olive"),
       hidden(div(id="sidbar_vag", conditionalPanel("input.sidebar === 'vag'",
                            selectInput("vag_sp", "Art", artenl$Art[artenl$Dz_Status=="Ausnahmeerscheinung"], 
                                        selected = "Bergbraunelle"))
       )),
     menuItem("Wiederfundkarte", tabName = "Wiederfundkarte", icon = icon("globe-europe"),
-             badgeLabel = HTML(paste(icon("ring"), "/", icon("binoculars"))), badgeColor = "green"),
+             badgeLabel = HTML(paste(icon("ring"), "/", icon("binoculars"))), badgeColor = "olive"),
       hidden(div(id="sidbar_Wiederfundkarte", 
                  conditionalPanel("input.sidebar === 'Wiederfundkarte'",
                    selectInput("Art", "Art", unique(data$Art[order(data$Nr)]), selected = "Rotkehlchen"),
@@ -172,13 +172,16 @@ sidebar <- dashboardSidebar(
                 )
       )),
     menuItem("About", tabName = "about", icon = icon("question")), br(),
-    hidden(div(id="social_links",
+    hidden(div(id = "social_links",
       HTML(paste0(
         "<script>",
         "var today = new Date();",
         "var yyyy = today.getFullYear();",
         "</script>",
-        "<p style = 'text-align: center;'><small>&copy; - <a href='mailto:g_r@posteo.de' target='_blank'>Georg Rüppel</a> - <script>document.write(yyyy);</script></small></p>"
+        "<p style = 'text-align: center;'> <small>",
+          "<a href = 'https://creativecommons.org/licenses/by-nc-nd/4.0/'> <img src = 'https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png' width = 50px > </a>",
+          "<a href = 'mailto:g_r@posteo.de' target = '_blank'> &nbsp Rüppel </a> et al. <script> document.write(yyyy); </script>",
+        "</small> </p>"
         ))
     ))
   )
@@ -193,6 +196,7 @@ body <- dashboardBody(useShinyjs(),
                       tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "CSS/styles.css")),   # add css styles
                       mobileDetect('isMobile'),   # detect mobile device
                       pwa("https://vereinjordsand.shinyapps.io/goie/", title = "GOie", output = "www/JS", icon="./www/icon.png"),   # enable PWA
+
   tabItems(
     
     
@@ -206,22 +210,22 @@ body <- dashboardBody(useShinyjs(),
                           ' & Jan von Rönn', '<a href="mailto:jan.vonroenn@jordsand.de"> <sup> <i class="fa fa-envelope"> </i> </sup> </a>'
             ))), br(),
             fluidRow(
-              box(title="Greifswalder Oie BirdObs", solidHeader = TRUE, status = "primary", br(),
+              box(title="Die Insel Greifswalder Oie", solidHeader = TRUE, status = "primary", br(),
                   fluidRow(
                     column(6, HTML('<center><img src="GOie.png"></center>')),
                     column(6, br(),br(),br(), valueBoxOutput("sp_ges", width = 12))
                   ), br(),
                   uiOutput("intro")
               ),
-              box(title="Über diese App", status = "success", collapsible = TRUE, icon=icon("user-friends"),
-                  HTML('<center><img style="heigth:200px; width:221px;" src="logo.png"></center>'),
+              box(title = "Über diese App", status = "primary", collapsible = TRUE, icon = icon("user-friends"),
+                  HTML('<br> <center> <img style = "heigth:200px; width:221px;" src = "vj.jpg"> </center> <br> <br>'),
                   HTML('Diese App ist eine interaktive Darstellung der Beringungs- und Beobachtungsdaten von der Greifswalder Oie. 
                   Sie enthält keine wesentliche inhaltliche Interpretationen und erhebt keinen Anspruch auf Vollständigkeit. 
                   Eine zitierfähige Version dieser Avifauna wird auf Zenodo (<a href="https://about.zenodo.org/">?</a>) zu finden sein:'),
-                  HTML('<center><a href="https://zenodo.org/communities/vj_goie_birdobs/"> <img src="zenodo.png"></a></center>'),
+                  HTML('<br> <br> <center> <a href="https://zenodo.org/communities/vj_goie_birdobs/"> <img src = "zenodo.png"> </a> </center>'),
                   h4("Dank"),
-                  "Wir danken allen ehemaligen und aktiven HelferInnen, FöjlerInnen,
-                   BeringerInnen und allen anderen für ihren Beitrag zum Gelingen der Arbeit auf der Insel.
+                  "Wir danken allen ehemaligen und aktiven Helfer:innen, Föjler:innen,
+                   Beringer:innen und allen anderen für ihren Beitrag zum Gelingen der Arbeit auf der Insel.
                    Für die Bereitstellung der Kontroll- und Wiederfunddaten von Vögeln mit Bezug zu anderen 
                    Beringungszentralen bedanken wir uns bei der Beringungszentrale Hiddensee 
                    und dem Dachverband Deutscher Avifaunisten danken wir für die Bereitstellung der ornitho-Daten."
@@ -357,12 +361,12 @@ body <- dashboardBody(useShinyjs(),
             ),
             fluidRow(
               box(title = "Frühjahr", status = "primary",
-                  HTML("Saisonübersicht mit minimalen, maximalen und druchschnittlichen Fangzahlen sowie der Abweichung vom Mittel seit 2000. &ndash;
+                  HTML("Saisonübersicht mit minimalen, maximalen und durchschnittlichen Fangzahlen sowie der Abweichung vom Mittel seit 2000. &ndash;
                        <i> Seasonal report for spring with minimal, maximal and mean numbers of first captures including the deviation from the mean since 2000. </i>"), br(), br(),
                   div(class="scroll-table", DTOutput("year_s"))
               ),
               box(title = "Herbst", status = "primary",
-                  HTML("Saisonübersicht mit minimalen, maximalen und druchschnittlichen Fangzahlen sowie der Abweichung vom Mittel seit 2000. &ndash;
+                  HTML("Saisonübersicht mit minimalen, maximalen und durchschnittlichen Fangzahlen sowie der Abweichung vom Mittel seit 2000. &ndash;
                        <i> Seasonal report for autumn with minimal, maximal and mean numbers of first captures including the deviation from the mean since 2000. </i>"), br(), br(),
                   div(class="scroll-table", DTOutput("year_a"))
               )
@@ -433,7 +437,7 @@ body <- dashboardBody(useShinyjs(),
               ),
               box(title = "Phänologie", status = "primary",
                   plotOutput("vag_pheno"),
-                  HTML("Dargestellt ist die Anzahl der Tage mit Nachweisen pro Dekade. &ndash; <i> Number of days with records per decade. </i>")
+                  HTML("Dargestellt ist die Anzahl der Tage mit Nachweisen pro Dekade. &ndash; <i> Number of days with records per 10d </i>")
               )
             )
     ),

@@ -57,6 +57,18 @@ Georg Rüppel
 
 E-Mail: [georg.rueppel2@jordsand.de](mailto:georg.rueppel2@jordsand.de)
 
+# ---------------------
+
+VEREIN JORDSAND zum Schutz der Seevögel und der Natur e. V.
+
+Bornkampsweg 35
+
+22926 Ahrensburg
+
+Telefon:   04102 32656
+
+E-Mail: [info@jordsand.de](mailto:info@jordsand.de)
+
 
 ## Datenschutz
 

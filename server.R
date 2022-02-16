@@ -80,7 +80,7 @@ server <- function(input, output, session) {
     showModal(
       modalDialog(title = "Beringungsdaten",
                   plotOutput("ring_i"),
-                  footer = tags$p(align = "left", "Anzahl Tage mit Beringungen pro Pendate"), easyClose = TRUE)
+                  footer = tags$p(align = "left", HTML("Anzahl Tage mit Beringungen pro Pentade. &ndash; <i> Days with ringing activity per 5d. </i>")), easyClose = TRUE)
     )
   })
   
@@ -88,7 +88,7 @@ server <- function(input, output, session) {
     showModal(
       modalDialog(title = "Beobachtungsdaten",
                   plotOutput("beob_i"),
-                  footer = tags$p(align = "left", "Anzahl Tage mit Beobachtungen pro Dekade"), easyClose = TRUE)
+                  footer = tags$p(align = "left", HTML("Anzahl Tage mit Beobachtungen pro Dekade. &ndash; <i> Days with observation activity per 10d. </i>")), easyClose = TRUE)
     )
   })
   
@@ -569,13 +569,13 @@ server <- function(input, output, session) {
   output$year_text <- output$year_text_2 <- renderText({
     HTML(paste("Dargestellt ist die Anzahl der Erstfänge pro Pentade im Jahr", input$year, 
                "(blaue Balken) sowie die durchschnittliche Fangzahl seit", year_start, "(gestrichelte Linie). &ndash;
-               <i> Number of first captures in", input$year, "(blue bars) together with the mean since", year_start, "(dashed line). </i>"))
+               <i> Number of first captures per 5d in", input$year, "(blue bars) together with the mean since", year_start, "(dashed line). </i>"))
   })
   
   output$year_text_ges <- renderText({
     HTML(paste("Dargestellt ist die Gesamtzahl der Erstfänge aller Arten pro Pentade im Jahr", input$year, 
                "(blaue Balken) sowie die durchschnittliche Fangzahl seit", year_start, "(gestrichelte Linie). &ndash;
-               <i> Total number of first captures of all species in", input$year, "(blue bars) together with the mean since", 
+               <i> Total number of first captures of all species per 5d in", input$year, "(blue bars) together with the mean since", 
                year_start, "(dashed line). </i>"))
   })
   
@@ -670,22 +670,22 @@ server <- function(input, output, session) {
   
           if (ring_type() == 0)
             out <- HTML("Dargestellt ist die durchschnittliche Anzahl der Erstfänge pro Pentade seit 2000, die Fangzeiten sind grau hinterlegt. &ndash; 
-            <i> Mean number of first captures per pentade since 2000, catching seasons are given in grey. </i>")
+            <i> Mean number of first captures per 5d since 2000, catching seasons are given in grey. </i>")
           if (ring_type() == 1)
             out <- HTML("Dargestellt ist die durchschnittliche Anzahl der Erstfänge pro Pentade seit 2000 (blaue Balken),
             die Fangzeiten sind grau hinterlegt. Die Anteile der Alterklassen sind dem unteren Diagrammen zu entnehmen,
             der Anteil unbestimmter Vögel wird in Prozent für das Frühjahr und den Herbst angegeben und ist grau dargestellt. &ndash;
-            <i> Mean number of first captures per pentade since 2000 (blue bars), catching seasons are given in grey. 
+            <i> Mean number of first captures per 5d since 2000 (blue bars), catching seasons are given in grey. 
             Chart below shows proportions of age classes, proportions of unidentified birds are given for spring and autumn and shown in grey. </i>")
           if (ring_type() == 2)
             out <- HTML("Dargestellt ist die durchschnittliche Anzahl der Erstfänge pro Pentade seit 2000 (blaue Balken),
             die Fangzeiten sind grau hinterlegt. Die Anteile der Alterklassen und Geschlechter sind den unteren Diagrammen zu entnehmen,
             der Anteil unbestimmter Vögel wird in Prozent für das Frühjahr und den Herbst angegeben und ist grau dargestellt. &ndash;
-            <i> Mean number of first captures per pentade since 2000 (blue bars), catching seasons are given in grey.
+            <i> Mean number of first captures per 5d since 2000 (blue bars), catching seasons are given in grey.
             Charts below show proportions of age classes and sexes, proportions of unidentified birds are given for spring and autumn and shown in grey. </i>")
           if (ring_type() == 3)
             out <- HTML("Dargestellt ist die Gesamtzahl der Erstfänge pro Pentade über alle Jahre, die Fangzeiten sind grau hinterlegt. &ndash;
-            <i> Total number of first captures per pentade over all years, catching seasons are given in grey. </i>")
+            <i> Total number of first captures per 5d over all years, catching seasons are given in grey. </i>")
   
         } else out <- HTML("Zu wenige Daten oder keine standardisierte Erfassung. &ndash; <i> Data deficit or not standardised monitored. </i>")
   
@@ -718,7 +718,7 @@ server <- function(input, output, session) {
     
     if (beob_type() == 2) {
     
-      # mean max per decade #
+      # mean max per 10d #
       
       tmp.max <- beobachtung() %>%
         filter(DATE_YEAR>=year_start) %>%
@@ -762,15 +762,15 @@ server <- function(input, output, session) {
         if (beob_type() == 0)
           out <- HTML("Zu wenige Daten oder keine standardisierte Erfassung. &ndash; <i> Data deficit or not standardised monitored. </i>")
         if (beob_type() == 1)
-          out <- HTML("Dargestellt ist die Anzahl der Tage mit Beobachtungen pro Dekade. &ndash; <i> Number of days with observations per decade. </i>")
+          out <- HTML("Dargestellt ist die Anzahl der Tage mit Beobachtungen pro Dekade. &ndash; <i> Number of days with observations per 10d. </i>")
         if (beob_type() == 2)
           out <- HTML(paste("Dargestellt ist das mittlere Dekandenmaximum seit", year_start, "(oben, 
                 die Farbe der Punkte gibt die Anzahl Jahre mit Beobachtungsdaten an. 
-                Je mehr Jahre mit Beobachtungen vorliegen, desto belastbarer das Dekadenmaximum.) 
+                Je mehr Jahre mit Beobachtungen vorliegen, desto belastbarer das Dekadenmaximum) 
                 sowie der relative Anteil von vollständigen Beobachtungslisten mit Nachweisen pro Dekade (unten). &ndash;
                 <i> Mean 10d-maximum since", year_start, "(upper, colour of dots refers to the number of years with observations. 
                 The more years with data are available, the more reliable is the 10d-max.) 
-                together with the relative amount of complete cecklistes with observations per decade (lower). </i>"))
+                together with the relative amount of complete cecklistes with observations per 10d (lower). </i>"))
   
         out
         
@@ -815,12 +815,12 @@ server <- function(input, output, session) {
 
         if (artenl$pheno_year[artenl$Art==input$sp][1] == "TRUE") {
   
-          out <- HTML("Dargestellt ist der jährliche Median (Punkte) mit den 50-%- (dicke vertikale Linien) und
-                 80-%-Quantilen (dünne vertikale Linien) sowie der Durchzugsmedian über alle Jahre (blaue Linie)
-                 und lineare Trends für Median und 80-%-Quantile (gestrichelte Linien). &ndash;
-                 <i> Migration timing over years: annual median (dots) together with 50% (thick vertival lines) and 
-                 80% quantiles (thin vertical lines), median over all years (blue line)
-                 and linear trends for median and 80% quantile (dashed lines). </i>")
+          out <- HTML("Dargestellt ist der jährliche Median (Punkte) mit den 0,25/0,75 (dicke vertikale Linien) und
+                 0,1/0,9 Quantilen (dünne vertikale Linien) sowie der Durchzugsmedian über alle Jahre (blaue Linie)
+                 und lineare Trends für Median und 0,1/0,9 Quantile (gestrichelte Linien). &ndash;
+                 <i> Migration timing over years: annual median (dots) together with 0.25/0.75 (thick vertival lines) and 
+                 0.1/0.9 quantiles (thin vertical lines), median over all years (blue line)
+                 and linear trends for median and 0.1/0.9 quantiles (dashed lines). </i>")
   
         } else out <- HTML("Zu wenige Daten oder keine standardisierte Erfassung. &ndash; <i> Data deficit or not standardised monitored. </i>")
   
@@ -872,22 +872,22 @@ server <- function(input, output, session) {
           
           if (ring_type_2() == 0)
             out <- HTML("Dargestellt ist die durchschnittliche Anzahl der Erstfänge pro Pentade seit 2000, die Fangzeiten sind grau hinterlegt. &ndash; 
-            <i> Mean number of first captures per pentade since 2000, catching seasons are given in grey. </i>")
+            <i> Mean number of first captures per 5d since 2000, catching seasons are given in grey. </i>")
           if (ring_type_2() == 1)
             out <- HTML("Dargestellt ist die durchschnittliche Anzahl der Erstfänge pro Pentade seit 2000 (blaue Balken),
             die Fangzeiten sind grau hinterlegt. Die Anteile der Alterklassen sind dem unteren Diagrammen zu entnehmen,
             der Anteil unbestimmter Vögel wird in Prozent für das Frühjahr und den Herbst angegeben und ist grau dargestellt. &ndash;
-            <i> Mean number of first captures per pentade since 2000 (blue bars), catching seasons are given in grey. 
+            <i> Mean number of first captures per 5d since 2000 (blue bars), catching seasons are given in grey. 
             Chart below shows proportions of age classes, proportions of unidentified birds are given for spring and autumn and shown in grey. </i>")
           if (ring_type_2() == 2)
             out <- HTML("Dargestellt ist die durchschnittliche Anzahl der Erstfänge pro Pentade seit 2000 (blaue Balken),
             die Fangzeiten sind grau hinterlegt. Die Anteile der Alterklassen und Geschlechter sind den unteren Diagrammen zu entnehmen,
             der Anteil unbestimmter Vögel wird in Prozent für das Frühjahr und den Herbst angegeben und ist grau dargestellt. &ndash;
-            <i> Mean number of first captures per pentade since 2000 (blue bars), catching seasons are given in grey.
+            <i> Mean number of first captures per 5d since 2000 (blue bars), catching seasons are given in grey.
             Charts below show proportions of age classes and sexes, proportions of unidentified birds are given for spring and autumn and shown in grey. </i>")
           if (ring_type_2() == 3)
             out <- HTML("Dargestellt ist die Gesamtzahl der Erstfänge pro Pentade über alle Jahre, die Fangzeiten sind grau hinterlegt. &ndash;
-            <i> Total number of first captures per pentade over all years, catching seasons are given in grey. </i>")
+            <i> Total number of first captures per 5d over all years, catching seasons are given in grey. </i>")
           
         } else out <- HTML("Zu wenige Daten oder keine standardisierte Erfassung. &ndash; <i> Data deficit or not standardised monitored. </i>")
         
@@ -920,7 +920,7 @@ server <- function(input, output, session) {
     
     if (beob_type_2() == 2) {
     
-      # mean max per decade #
+      # mean max per 10d #
       
       tmp.max_2 <- beobachtung_2() %>%
         filter(DATE_YEAR>=year_start) %>%
@@ -964,15 +964,15 @@ server <- function(input, output, session) {
         if (beob_type_2() == 0)
           out <- HTML("Zu wenige Daten oder keine standardisierte Erfassung. &ndash; <i> Data deficit or not standardised monitored. </i>")
         if (beob_type_2() == 1)
-          out <- HTML("Dargestellt ist die Anzahl der Tage mit Beobachtungen pro Dekade. &ndash; <i> Number of days with observations per decade. </i>")
+          out <- HTML("Dargestellt ist die Anzahl der Tage mit Beobachtungen pro Dekade. &ndash; <i> Number of days with observations per 10d. </i>")
         if (beob_type_2() == 2)
           out <- HTML(paste("Dargestellt ist das mittlere Dekandenmaximum seit", year_start, "(oben, 
                 die Farbe der Punkte gibt die Anzahl Jahre mit Beobachtungsdaten an. 
-                Je mehr Jahre mit Beobachtungen vorliegen, desto belastbarer das Dekadenmaximum.) 
+                Je mehr Jahre mit Beobachtungen vorliegen, desto belastbarer das Dekadenmaximum) 
                 sowie der relative Anteil von vollständigen Beobachtungslisten mit Nachweisen pro Dekade (unten). &ndash;
                 <i> Mean 10d-maximum since", year_start, "(upper, colour of dots refers to the number of years with observations. 
                 The more years with data are available, the more reliable is the 10d-max.) 
-                together with the relative amount of complete cecklistes with observations per decade (lower). </i>"))
+                together with the relative amount of complete cecklistes with observations per 10d (lower). </i>"))
         
         out
         
@@ -1017,12 +1017,12 @@ server <- function(input, output, session) {
       
         if (artenl$pheno_year[artenl$Art==input$sp_2][1] == "TRUE") {
           
-          out <- HTML("Dargestellt ist der jährliche Median (Punkte) mit den 50-%- (dicke vertikale Linien) und
-                 80-%-Quantilen (dünne vertikale Linien) sowie der Durchzugsmedian über alle Jahre (blaue Linie)
-                 und lineare Trends für Median und 80-%-Quantile (gestrichelte Linien). &ndash;
-                 <i> Migration timing over years: annual median (dots) together with 50% (thick vertival lines) and 
-                 80% quantiles (thin vertical lines), median over all years (blue line)
-                 and linear trends for median and 80% quantile (dashed lines). </i>")
+          out <- HTML("Dargestellt ist der jährliche Median (Punkte) mit den 0,25/0,75 (dicke vertikale Linien) und
+                 0,1/0,9 Quantilen (dünne vertikale Linien) sowie der Durchzugsmedian über alle Jahre (blaue Linie)
+                 und lineare Trends für Median und 0,1/0,9 Quantile (gestrichelte Linien). &ndash;
+                 <i> Migration timing over years: annual median (dots) together with 0.25/0.75 (thick vertival lines) and 
+                 0.1/0.9 quantiles (thin vertical lines), median over all years (blue line)
+                 and linear trends for median and 0.1/0.9 quantiles (dashed lines). </i>")
           
         } else out <- HTML("Zu wenige Daten oder keine standardisierte Erfassung. &ndash; <i> Data deficit or not standardised monitored. </i>")
         
@@ -1089,7 +1089,7 @@ server <- function(input, output, session) {
     )
 
 
-    ########## per decade ##########
+    ########## per 10d ##########
 
     vag_pheno <- data.frame(date=unique(vagrant()), decade=ceiling(yday(unique(vagrant()))/10)) %>%
       group_by(decade) %>%

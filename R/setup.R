@@ -63,7 +63,7 @@ data_ring$DATE <- as.Date(data_ring$DATE)
 ##### subsetting #####
 
 year_start <- 2000   # standardised since 2000
-year_end   <- 2021
+year_end   <- 2022
 
 year_start.s <- 2000   # first spring for zug() plot
 year_start.a <- 2000   # first autumn for zug() plot

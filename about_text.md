@@ -1,4 +1,4 @@
-## Autoren
+## Autor:innen
 
 Georg Rüppel [georg.rueppel2@jordsand.de](mailto:georg.rueppel2@jordsand.de)
 

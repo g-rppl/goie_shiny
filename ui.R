@@ -36,10 +36,10 @@ header <- dashboardHeader(title = hidden(div(id="GOie", tags$b("Greifswalder Oie
                                        headerText = tags$b("Informationen zum Datenstand"),
                                        shinydashboardPlus::messageItem("Beringung", textOutput("ring_info"), icon= icon("ring"), inputId="openModal1"),
                                        shinydashboardPlus::messageItem("Beobachtungen", textOutput("beob_info"), icon= icon("binoculars"), inputId="openModal2"),
-                                       messageItem("Wiederfunde", textOutput("rec_info"), icon = icon("search-location"))
+                                       messageItem("Wiederfunde", textOutput("rec_info"), icon = icon("magnifying-glass-location"))
                           ),
                           dropdownMenu(type = "message", headerText = tags$b("Teilen"),
-                                      icon = icon("share-alt"), badgeStatus = NULL,
+                                      icon = icon("share-nodes"), badgeStatus = NULL,
                                       messageItem(
                                         from = "Twitter",
                                         message = "",
@@ -88,13 +88,13 @@ sidebar <- dashboardSidebar(
   tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "CSS/styles.css")),   # add css styles
   
   sidebarMenu(id = "sidebar", 
-    menuItem("Startseite", tabName = "Startseite", icon = icon("home")),
+    menuItem("Startseite", tabName = "Startseite", icon = icon("house")),
     menuItem("Artenliste", tabName = "Artenliste", icon = icon("clipboard-list"),
              badgeLabel = HTML(paste(icon("binoculars"), "/", icon("ring"))), badgeColor = "olive"),
     menuItem("Brutvögel", tabName = "breeding", icon = icon("egg"),
              badgeLabel = icon("binoculars"), badgeColor = "olive"),
       hidden(div(id="sidbar_bvk", conditionalPanel("input.sidebar === 'breeding'",
-                           actionButton("compare_bvk", "Arten vergleichen", icon("sync-alt")),
+                           actionButton("compare_bvk", "Arten vergleichen", icon("arrows-rotate")),
                            hidden(actionButton("compare_bvk_2", "Anzahl Arten anzeigen", icon("chart-line")))
                            )
       )),
@@ -102,7 +102,7 @@ sidebar <- dashboardSidebar(
              badgeLabel = icon("ring"), badgeColor = "olive"),
       hidden(div(id="sidbar_ring_count", conditionalPanel("input.sidebar === 'ring_count'",
                            selectInput("select_season", "Saison", c("gesamtes Jahr", "Frühjahr", "Herbst")),
-                           actionButton("compare_ring_count", "Arten vergleichen", icon("sync-alt")),
+                           actionButton("compare_ring_count", "Arten vergleichen", icon("arrows-rotate")),
                            hidden(actionButton("compare_ring_count_2", "Gesamtzahl anzeigen", icon("chart-bar")))
                            )
       )),
@@ -110,7 +110,7 @@ sidebar <- dashboardSidebar(
             badgeLabel = HTML(paste(icon("ring"), "/", icon("binoculars"))), badgeColor = "olive"),
       hidden(div(id="sidbar_year_data", conditionalPanel("input.sidebar === 'year_data'",
                            selectInput("year", "Jahr", 2000:year_end, selected = year_end),
-                           actionButton("compare_year", "Arten vergleichen", icon("sync-alt")),
+                           actionButton("compare_year", "Arten vergleichen", icon("arrows-rotate")),
                            hidden(actionButton("compare_year_2", "Gesamtzahl anzeigen", icon("chart-bar")))
                            )
       )),
@@ -119,7 +119,7 @@ sidebar <- dashboardSidebar(
       hidden(div(id="sidbar_pheno", conditionalPanel("input.sidebar === 'pheno'",
                            selectInput("sp", "Art", artenl$Art[artenl$Dz_Status!="Ausnahmeerscheinung" & artenl$Art!="Alpenbirkenzeisig"], 
                                        selected = "Rotkehlchen"),
-                           actionButton("compare_pheno", "Arten vergleichen", icon("sync-alt")),
+                           actionButton("compare_pheno", "Arten vergleichen", icon("arrows-rotate")),
                            hidden(div(id = "show_sp_2",
                               actionButton("compare_pheno_2", "nur eine Art", icon("caret-up")),
                               selectInput("sp_2", "Art 2", artenl$Art[artenl$Dz_Status!="Ausnahmeerscheinung" & artenl$Art!="Alpenbirkenzeisig"],
@@ -134,12 +134,12 @@ sidebar <- dashboardSidebar(
                            selectInput("vag_sp", "Art", artenl$Art[artenl$Dz_Status=="Ausnahmeerscheinung"], 
                                        selected = "Bergbraunelle"))
       )),
-    menuItem("Wiederfundkarte", tabName = "Wiederfundkarte", icon = icon("globe-europe"),
+    menuItem("Wiederfundkarte", tabName = "Wiederfundkarte", icon = icon("earth-europe"),
              badgeLabel = HTML(paste(icon("ring"), "/", icon("binoculars"))), badgeColor = "olive"),
       hidden(div(id="sidbar_Wiederfundkarte", 
                  conditionalPanel("input.sidebar === 'Wiederfundkarte'",
                    selectInput("Art", "Art", unique(data$Art[order(data$Nr)]), selected = "Rotkehlchen"),
-                   actionButton("compare_Wiederfundkarte", "Arten vergleichen", icon("sync-alt")),
+                   actionButton("compare_Wiederfundkarte", "Arten vergleichen", icon("arrows-rotate")),
                    hidden(div(id = "show_Art_2",
                               actionButton("compare_Wiederfundkarte_2", "nur eine Art", icon("caret-up")),
                               selectInput("Art_2", "Art 2", unique(data$Art[order(data$Nr)]), selected =  "Rotkehlchen")
@@ -180,7 +180,7 @@ sidebar <- dashboardSidebar(
         "</script>",
         "<p style = 'text-align: center;'> <small>",
           "<a href = 'https://creativecommons.org/licenses/by-nc-nd/4.0/'> <img src = 'https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png' width = 50px > </a>",
-          "<a href = 'mailto:g_r@posteo.de' target = '_blank'> &nbsp Rüppel </a> et al. <script> document.write(yyyy); </script>",
+          "<a href = 'mailto:georg.rueppel2@jordsand.de' target = '_blank'> &nbsp Rüppel </a> et al. <script> document.write(yyyy); </script>",
         "</small> </p>"
         ))
     ))
@@ -217,12 +217,12 @@ body <- dashboardBody(useShinyjs(),
                   ), br(),
                   uiOutput("intro")
               ),
-              box(title = "Über diese App", status = "primary", collapsible = TRUE, icon = icon("user-friends"),
+              box(title = "Über diese App", status = "primary", collapsible = TRUE, icon = icon("users"),
                   HTML('<br> <center> <img style = "heigth:200px; width:221px;" src = "vj.jpg"> </center> <br> <br>'),
                   HTML('Diese App ist eine interaktive Darstellung der Beringungs- und Beobachtungsdaten von der Greifswalder Oie. 
-                  Sie enthält keine wesentliche inhaltliche Interpretationen und erhebt keinen Anspruch auf Vollständigkeit. 
-                  Eine zitierfähige Version dieser Avifauna wird auf Zenodo (<a href="https://about.zenodo.org/">?</a>) zu finden sein:'),
-                  HTML('<br> <br> <center> <a href="https://zenodo.org/communities/vj_goie_birdobs/"> <img src = "zenodo.png"> </a> </center>'),
+                  Sie enthält keine wesentlichen inhaltlichen Interpretationen und erhebt keinen Anspruch auf Vollständigkeit. 
+                  Eine zitierfähige Version dieser Avifauna ist auf Zenodo (<a href="https://about.zenodo.org/">?</a>) zu finden:'),
+                  HTML('<br> <br> <center> <a href="https://doi.org/10.5281/zenodo.6409748"> <img src = "zenodo.png"> </a> </center>'),
                   h4("Dank"),
                   "Wir danken allen ehemaligen und aktiven Helfer:innen, Föjler:innen,
                    Beringer:innen und allen anderen für ihren Beitrag zum Gelingen der Arbeit auf der Insel.

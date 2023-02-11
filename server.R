@@ -1349,7 +1349,7 @@ server <- function(input, output, session) {
     )
 
     output$rec_map_rate <- renderInfoBox(
-        infoBox("", subtitle = "Wiederfundrate von auf der Oie beringten Vögeln", paste(fund_rate, "%"), icon=icon("percentage"), color="light-blue")
+        infoBox("", subtitle = "Wiederfundrate von auf der Oie beringten Vögeln", paste(fund_rate, "%"), icon=icon("percent"), color="light-blue")
     )
     
     output$max_TAD <- renderInfoBox(

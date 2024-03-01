@@ -587,8 +587,8 @@ server <- function(input, output, session) {
   
   observe({
     
-    output$year_s <- renderDataTable(table_s(), selection="single")
-    output$year_a <- renderDataTable(table_a(), selection="single")
+    output$year_s <- DT::renderDataTable(table_s(), selection="single")
+    output$year_a <- DT::renderDataTable(table_a(), selection="single")
     
     ##### row selections #####
     

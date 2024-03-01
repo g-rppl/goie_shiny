@@ -15,6 +15,8 @@
 ### load required packages
 ##############################
 
+library(tidyverse)
+library(shiny)
 library(shinydashboard)
 library(shinydashboardPlus)
 library(shinyjs)
@@ -23,14 +25,10 @@ library(shiny.pwa)
 library(shinycssloaders)
 library(shinyalert)
 library(leaflet)
-library(ggplot2)
 library(readxl)
-library(dplyr)
-library(tidyr)
 library(kableExtra)
   options(knitr.kable.NA = '')
 library(DT)
-library(lubridate)
 library(markdown)
 library(knitr)
 
@@ -63,7 +61,7 @@ data_ring$DATE <- as.Date(data_ring$DATE)
 ##### subsetting #####
 
 year_start <- 2000   # standardised since 2000
-year_end   <- 2022
+year_end   <- 2023
 
 year_start.s <- 2000   # first spring for zug() plot
 year_start.a <- 2000   # first autumn for zug() plot
